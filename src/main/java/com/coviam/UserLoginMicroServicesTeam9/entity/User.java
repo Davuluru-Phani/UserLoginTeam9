@@ -20,6 +20,6 @@ public class User {
     private String userName;
     private String userAddress;
     private String userImgUrl;
-    private String userLastLogin;
+   // private String userLastLogin;
 
 }

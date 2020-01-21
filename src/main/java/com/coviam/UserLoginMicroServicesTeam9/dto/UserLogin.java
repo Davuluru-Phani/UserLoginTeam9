@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter @Setter
 public class UserLogin {
 
-    private String UserEmail;
-    private String UserPassword;
+    private String userEmail;
+    private String userPassword;
 
 }
