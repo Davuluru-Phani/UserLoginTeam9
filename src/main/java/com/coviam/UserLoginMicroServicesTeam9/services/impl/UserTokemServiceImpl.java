@@ -17,7 +17,7 @@ public class UserTokemServiceImpl implements UserTokenService {
         UUID uuid=UUID.randomUUID();
         UserToken userToken=new UserToken();
         userToken.setUuid(uuid.toString());
-        userToken.setUsermail(email);
+        userToken.setUserEmail(email);
         userTokenRepo.save(userToken);
 //        System.out.println(userToken.toString());
         return userToken;

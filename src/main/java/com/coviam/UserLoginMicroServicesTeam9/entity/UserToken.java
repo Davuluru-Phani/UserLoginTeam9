@@ -7,14 +7,14 @@ import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
-@Getter @Setter
-@Table(name="usertoken")
+@Getter
+@Setter
+@Table
 public class UserToken {
 
     @Id
-    @Column(name = "id")
     private String uuid;
 
-    private String Usermail;
+    private String userEmail;
 
 }
