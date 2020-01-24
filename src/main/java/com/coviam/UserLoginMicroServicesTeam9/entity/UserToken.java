@@ -14,7 +14,6 @@ public class UserToken {
 
     @Id
     private String uuid;
-
     private String userEmail;
 
 }

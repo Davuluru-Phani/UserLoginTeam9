@@ -7,12 +7,19 @@ import com.coviam.UserLoginMicroServicesTeam9.services.UserServices;
 import com.coviam.UserLoginMicroServicesTeam9.services.UserTokenService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -74,8 +81,73 @@ public class UserController {
         return new ResponseEntity<AccountDetailsDTO>(userServices.getAccountDetails(emailDTO), HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/login")
-    public ResponseEntity<LoginDetailsDTO> loginButton(@RequestBody UserLogin userLogin) {
-        return new ResponseEntity<LoginDetailsDTO>(userServices.checkLoginDetails(userLogin), HttpStatus.OK);
+    @GetMapping(path = "/getCookies")
+    public ResponseEntity<?> getCookies(@RequestHeader Map<String, String> headerss, HttpServletResponse response, HttpServletRequest request) {
+
+        System.out.println("========");
+
+        /*    final double random = Math.random();
+        Cookie cookie = new Cookie("myname", String.valueOf(random));
+        cookie.setMaxAge(7 * 24 * 60 * 60); // expires in 7 days
+//        cookie.setSecure(true);
+//        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+
+        Cookie[] cookies = request.getCookies();
+//        System.out.println("length :" + cookies.length);
+        if (cookies != null) {
+            Arrays.stream(cookies)
+                    .forEach(c -> System.out.println(c.getName() + "=" + c.getValue()));
+        }
+
+        response.addCookie(cookie);
+        */
+
+        headerss.forEach((key, value) -> {
+            System.out.println(String.format("Header '%s' = %s", key, value));
+        });
+
+
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            Arrays.stream(cookies)
+                    .forEach(c -> System.out.println(c.getName() + "=" + c.getValue()));
+        }
+        Map<String, String> map = new HashMap<>();
+        map.put("aa", "bb");
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/login")
+    public ResponseEntity<?> loginButton(@RequestHeader Map<String, String> headerss, @RequestBody UserLogin userLogin, HttpServletResponse response, HttpServletRequest request) {
+        System.out.println("********");
+        headerss.forEach((key, value) -> {
+            System.out.println(String.format("Header '%s' = %s", key, value));
+        });
+
+
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            Arrays.stream(cookies)
+                    .forEach(c -> System.out.println(c.getName() + "=" + c.getValue()));
+        }
+        LoginDetailsDTO loginDetailsDTO = userServices.checkLoginDetails(userLogin);
+        Cookie cookie = new Cookie("uuid", String.valueOf(loginDetailsDTO.getUuid()));
+        cookie.setMaxAge(7 * 24 * 60 * 60); // expires in 7 days
+//        cookie.setSecure(true);
+//        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.add("Set-Cookie", "uuid=" + String.valueOf(loginDetailsDTO.getUuid()));
+
+        System.out.println("return uuid : " + String.valueOf(loginDetailsDTO.getUuid()));
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(loginDetailsDTO);
+
+//        return new ResponseEntity<>(loginDetailsDTO, HttpStatus.OK);
+        //uuid=2c8984fb-da59-48a3-9308-326873a6cefe
+        //uuid=d86d5b3f-8341-43fb-8d40-1fef9e20190b
     }
 }
+
