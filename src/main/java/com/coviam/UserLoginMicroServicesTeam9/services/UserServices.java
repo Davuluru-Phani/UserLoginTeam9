@@ -14,4 +14,8 @@ public interface UserServices {
     LoginDetailsDTO checkLoginDetails(UserLogin userLogin);
 
     AccountDetailsDTO getAccountDetails(EmailDTO emailDTO);
+
+    public Boolean checkEmail(String email);
+
+    public User getUser(String email);
 }

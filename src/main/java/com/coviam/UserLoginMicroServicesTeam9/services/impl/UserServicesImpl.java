@@ -66,4 +66,22 @@ public class UserServicesImpl implements UserServices {
         }
         return accountDetailsDTO;
     }
+
+    ///Phani
+
+    @Override
+    public Boolean checkEmail(String email){
+        if(userRepo.existsById(email)){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    ///Phani
+    @Override
+    public User getUser(String email){
+        return userRepo.findByUserEmail(email);
+    }
 }

@@ -149,5 +149,20 @@ public class UserController {
         //uuid=2c8984fb-da59-48a3-9308-326873a6cefe
         //uuid=d86d5b3f-8341-43fb-8d40-1fef9e20190b
     }
+
+    //Phani
+
+    @PostMapping("/updatePassword")
+    public ResponseEntity<?> updatePassword(@RequestBody UserLogin userLogin){
+
+        User user=userServices.getUser(userLogin.getUserEmail());
+        User newUser=new User();
+        BeanUtils.copyProperties(user,newUser);
+        newUser.setUserPassword(userLogin.getUserPassword());
+        userServices.save(newUser);
+        FalseDto falseDto=new FalseDto();
+        falseDto.setStatus(false);
+        return new ResponseEntity<FalseDto>(falseDto, HttpStatus.OK);
+    }
 }
 
