@@ -37,4 +37,10 @@ public class UserTokemServiceImpl implements UserTokenService {
         }
     }
 
+
+    ///Phani
+    public String getEmail(String uuid){
+        return userTokenRepo.findById(uuid).get().getUserEmail();
+    }
+
 }

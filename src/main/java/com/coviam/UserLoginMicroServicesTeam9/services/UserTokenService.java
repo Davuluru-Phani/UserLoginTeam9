@@ -9,4 +9,5 @@ public interface UserTokenService {
     public UserToken generateUuid(String email);
     public Optional<UserToken> checkUuid(String uuid);
     public boolean deleteUuid(String uuid);
+    public String getEmail(String uuid);
 }

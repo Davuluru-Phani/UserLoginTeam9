@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +24,7 @@ import java.util.Map;
 import java.util.UUID;
 
 
-@CrossOrigin
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -164,5 +165,56 @@ public class UserController {
         falseDto.setStatus(false);
         return new ResponseEntity<FalseDto>(falseDto, HttpStatus.OK);
     }
+
+
+    ///Phani
+
+    @PostMapping("/addGoogle")
+    public ResponseEntity<?> addGoogleProfile(@RequestBody GoogleDto googleDto){
+        User user = new User();
+        BeanUtils.copyProperties(googleDto, user);
+        User userCreated = userServices.save(user);
+        if (userCreated != null) {
+            return new ResponseEntity<StatusDTO>(new StatusDTO(true), HttpStatus.OK);
+        }
+        return new ResponseEntity<StatusDTO>(new StatusDTO(false), HttpStatus.BAD_REQUEST);
+    }
+
+    ///Phani
+
+    @PostMapping("/addAddress")
+    public ResponseEntity<?> addAddress(@RequestBody AddressDto addressDto){
+
+        String email=userTokenService.getEmail(addressDto.getUuid());
+        User user=userServices.getUser(email);
+        user.setUserAddress(addressDto.getAddress());
+        User userCreated=userServices.save(user);
+        if (userCreated != null) {
+            return new ResponseEntity<StatusDTO>(new StatusDTO(true), HttpStatus.OK);
+        }
+        return new ResponseEntity<StatusDTO>(new StatusDTO(false), HttpStatus.BAD_REQUEST);
+
+    }
+
+    ///Phani
+    @PostMapping("/addFacebook")
+    public ResponseEntity<?> addFacebook(@RequestBody FacebookDto facebookDto){
+        String Id=null;
+        if(facebookDto.getIdToken()==null){
+            return new ResponseEntity<StatusDTO>(new StatusDTO(false), HttpStatus.BAD_REQUEST);
+        }
+        String accessToken=facebookDto.getIdToken();
+        FacebookInputDto facebookInputDTO = (new RestTemplate()).getForObject("https://graph.facebook.com/me?fields=name,email,picture&access_token="+accessToken, FacebookInputDto.class);
+        User user=new User();
+        user.setUserName(facebookInputDTO.getName());
+        user.setUserEmail(facebookInputDTO.getEmail());
+        user.setUserImgUrl(facebookInputDTO.getPicture().getData().getUrl());
+        User userCreated=userServices.save(user);
+        if (userCreated != null) {
+            return new ResponseEntity<StatusDTO>(new StatusDTO(true), HttpStatus.OK);
+        }
+        return new ResponseEntity<StatusDTO>(new StatusDTO(false), HttpStatus.BAD_REQUEST);
+    }
+
 }
 
